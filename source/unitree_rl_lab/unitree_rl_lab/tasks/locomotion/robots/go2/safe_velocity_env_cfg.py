@@ -347,14 +347,7 @@ class RewardsCfg:
 @configclass
 class CostCfg:
     """Cost terms for the MDP."""
-    feet_slide = CostTerm(
-        func=mdp.feet_slide,
-        weight=1.0,
-        params={
-            "asset_cfg": SceneEntityCfg("robot", body_names=".*_foot"),
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
-        },
-    )
+    dof_pos_limits = CostTerm(func=mdp.joint_pos_limits, weight=1.0)
 
 @configclass
 class TerminationsCfg:
