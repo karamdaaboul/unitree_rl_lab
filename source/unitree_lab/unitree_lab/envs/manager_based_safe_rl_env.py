@@ -80,7 +80,8 @@ class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
         super()._reset_idx(env_ids)
         # The parent's `_reset_idx` might NOT call cost_manager.reset(env_ids).
         # So let's do it explicitly:
-        self.cost_manager.reset(env_ids)
+        info = self.cost_manager.reset(env_ids)
+        self.extras["log"].update(info)
 
     # We do NOT override `render` at all, because there's no difference from the parent.
     # The parent's `render(...)` method is automatically used.
