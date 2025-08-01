@@ -33,34 +33,34 @@ COBBLESTONE_ROAD_CFG = terrain_gen.TerrainGeneratorCfg(
     use_cache=False,
     sub_terrains={
         "flat": terrain_gen.MeshPlaneTerrainCfg(proportion=0.1),
-        # "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-        #     proportion=0.1, noise_range=(0.01, 0.06), noise_step=0.01, border_width=0.25
-        # ),
-        # "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
-        #     proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        # ),
-        # "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
-        #     proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        # ),
-        # "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-        #     proportion=0.2, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0
-        # ),
-        # "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
-        #     proportion=0.2,
-        #     step_height_range=(0.05, 0.23),
-        #     step_width=0.3,
-        #     platform_width=3.0,
-        #     border_width=1.0,
-        #     holes=False,
-        # ),
-        # "pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
-        #     proportion=0.2,
-        #     step_height_range=(0.05, 0.23),
-        #     step_width=0.3,
-        #     platform_width=3.0,
-        #     border_width=1.0,
-        #     holes=False,
-        # ),
+        "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
+            proportion=0.1, noise_range=(0.01, 0.06), noise_step=0.01, border_width=0.25
+        ),
+        "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        ),
+        "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        ),
+        "boxes": terrain_gen.MeshRandomGridTerrainCfg(
+            proportion=0.2, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0
+        ),
+        "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
+            proportion=0.2,
+            step_height_range=(0.05, 0.23),
+            step_width=0.3,
+            platform_width=3.0,
+            border_width=1.0,
+            holes=False,
+        ),
+        "pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
+            proportion=0.2,
+            step_height_range=(0.05, 0.23),
+            step_width=0.3,
+            platform_width=3.0,
+            border_width=1.0,
+            holes=False,
+        ),
     },
 )
 
@@ -96,7 +96,7 @@ class RobotSceneCfg(InteractiveSceneCfg):
     height_scanner = RayCasterCfg(
         prim_path="{ENV_REGEX_NS}/Robot/base",
         offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
-        attach_yaw_only=True,
+        ray_alignment='yaw',
         pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
         debug_vis=False,
         mesh_prim_paths=["/World/ground"],
@@ -412,6 +412,9 @@ class RobotEnvCfg(ManagerBasedRLEnvCfg):
         # custom config
         self.scene.robot.actuators["legs"].stiffness = 40.0
         self.scene.robot.actuators["legs"].damping = 1.0
+
+        # remove the curriculum for the command
+        self.curriculum.lin_vel_cmd_levels = None
 
 
 @configclass
