@@ -25,3 +25,8 @@ This directory contains the Unitree Go2 robot locomotion environments for reinfo
 
 - **`Unitree-Go2-Velocity-Real`**: Real robot velocity control environment for training without height scanner
 - **`Unitree-Go2-Velocity-Real-Play`**: Real robot velocity control environment for evaluation/playback
+
+### Distillation Robot Environments
+
+- **`Unitree-Go2-Velocity-Distillation`**: Distillation velocity control environment for training with teacher-student learning
+- **`Unitree-Go2-Velocity-Distillation-Play`**: Distillation velocity control environment for evaluation/playback
