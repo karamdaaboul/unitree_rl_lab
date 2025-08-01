@@ -1,5 +1,6 @@
 import math
-
+import torch
+import numpy as np
 import isaaclab.sim as sim_utils
 import isaaclab.terrains as terrain_gen
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg
@@ -424,3 +425,20 @@ class RobotPlayEnvCfg(RobotEnvCfg):
         self.scene.terrain.terrain_generator.num_rows = 2
         self.scene.terrain.terrain_generator.num_cols = 1
         self.commands.base_velocity.ranges = self.commands.base_velocity.limit_ranges
+
+
+@configclass
+class RobotKeyboardEnvCfg(RobotPlayEnvCfg):
+    def __post_init__(self) -> None:
+        # post init of parent
+        super().__post_init__()
+        # define the keyboard control
+        self.velocity_command = [0, 0, 0]
+        def velocity_func(env):
+            return torch.tensor(
+                np.array([self.velocity_command]), device=env.device, dtype=torch.float32
+            ).repeat(env.num_envs, 1)
+        self.observations.policy.velocity_commands = ObsTerm(func=velocity_func)
+        self.commands.base_velocity.ranges= mdp.UniformLevelVelocityCommandCfg.Ranges(
+            lin_vel_x=(.0, .0), lin_vel_y=(.0, .0), ang_vel_z=(.0, .0)
+        )
