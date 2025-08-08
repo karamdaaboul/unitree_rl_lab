@@ -1,4 +1,6 @@
 import math
+import torch
+import numpy as np
 
 import isaaclab.sim as sim_utils
 import isaaclab.terrains as terrain_gen
@@ -231,10 +233,10 @@ class ObservationsCfg:
         )
         last_action = ObsTerm(func=mdp.last_action, clip=(-100, 100))
         
-        height_scanner = ObsTerm(func=mdp.height_scan,
-            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
-            clip=(-1.0, 5.0),
-        )
+        #height_scanner = ObsTerm(func=mdp.height_scan,
+        #    params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+        #    clip=(-1.0, 5.0),
+        #)
 
         def __post_init__(self):
             # self.history_length = 5
@@ -422,10 +424,28 @@ class RobotPlayEnvCfg(RobotEnvCfg):
     def __post_init__(self):
         super().__post_init__()
         self.scene.num_envs = 32
-        self.scene.terrain.terrain_generator.num_rows = 2
-        self.scene.terrain.terrain_generator.num_cols = 1
+        self.scene.terrain.terrain_generator.num_rows = 3
+        self.scene.terrain.terrain_generator.num_cols = 3
+        self.scene.terrain.terrain_generator.curriculum = False
         self.commands.base_velocity.ranges = self.commands.base_velocity.limit_ranges
 
+
+@configclass
+class RobotKeyboardEnvCfg(RobotPlayEnvCfg):
+    def __post_init__(self) -> None:
+        # post init of parent
+        super().__post_init__()
+        self.scene.num_envs = 1
+        # define the keyboard control
+        self.velocity_command = [0, 0, 0]
+        def velocity_func(env):
+            return torch.tensor(
+                np.array([self.velocity_command]), device=env.device, dtype=torch.float32
+            ).repeat(env.num_envs, 1)
+        self.observations.policy.velocity_commands = ObsTerm(func=velocity_func)
+        self.commands.base_velocity.ranges= mdp.UniformLevelVelocityCommandCfg.Ranges(
+            lin_vel_x=(.0, .0), lin_vel_y=(.0, .0), ang_vel_z=(.0, .0)
+        )
 
 @configclass
 class RobotRealEnvCfg(RobotEnvCfg):

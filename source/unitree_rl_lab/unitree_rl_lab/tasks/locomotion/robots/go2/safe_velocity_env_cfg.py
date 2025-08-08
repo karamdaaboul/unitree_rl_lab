@@ -432,6 +432,7 @@ class RobotKeyboardEnvCfg(RobotPlayEnvCfg):
     def __post_init__(self) -> None:
         # post init of parent
         super().__post_init__()
+        self.scene.num_envs = 1
         # define the keyboard control
         self.velocity_command = [0, 0, 0]
         def velocity_func(env):
