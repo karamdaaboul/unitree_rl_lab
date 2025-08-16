@@ -33,6 +33,8 @@ Currently supports Unitree **Go2**, **H1** and **G1-29dof** robots.
     ```bash
     conda activate env_isaaclab
     python -m pip install -e source/unitree_rl_lab
+    python -m pip install -e source/unitree_rl
+    python -m pip install -e source/unitree_lab
     ```
 - Download unitree usd files
 

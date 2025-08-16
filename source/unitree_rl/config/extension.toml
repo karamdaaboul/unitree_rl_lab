@@ -1,0 +1,25 @@
+[package]
+
+# Note: Semantic Versioning is used: https://semver.org/
+version = "0.2.3"
+
+# Description
+title = "Unitree RL"
+description="Extension containing reinforcement learning related utilities."
+readme  = "docs/README.md"
+repository = "https://github.com/isaac-sim/IsaacLab"
+category = "robotics"
+keywords = ["robotics", "rl", "wrappers", "learning"]
+author = "Unitree RL Team"
+maintainer = "Unitree RL Team"
+
+[dependencies]
+"isaaclab" = {}
+"isaaclab_assets" = {}
+"isaaclab_tasks" = {}
+
+[core]
+reloadable = false
+
+[[python.module]]
+name = "unitree_rl"
