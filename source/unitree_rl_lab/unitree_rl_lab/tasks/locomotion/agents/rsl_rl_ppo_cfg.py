@@ -56,14 +56,14 @@ class BaseP3ORunnerCfg(BasePPORunnerCfg):
         desired_kl=0.01,
         max_grad_norm=1.0,
         # P3O-specific parameters
-        kappa_init=1.0,  # Initial penalty factor
+        #kappa_init=1.0,  # Initial penalty factor
         kappa_max=100.0,  # Maximum penalty factor
         rho=1.5,  # Penalty factor multiplier (ρ > 1)
-        cost_thresholds=0.1,  # Cost threshold for constraints
+        cost_thresholds=[0.1],  # Cost threshold for constraints
         adaptive_penalty=True,  # Whether to use adaptive penalty updates
         constraint_margin=0.85,  # Constraint violation detection margin
         use_clipped_cost_loss=True,  # Whether to use clipped cost value loss
         cost_loss_coef=1.0,  # Coefficient for cost value loss
-        constraint_delay=0,  # Iterations to delay constraint enforcement
+        #constraint_delay=0,  # Iterations to delay constraint enforcement
     )
     

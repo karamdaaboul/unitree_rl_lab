@@ -11,7 +11,7 @@ class RslRlP3OAlgorithmCfg(RslRlPpoAlgorithmCfg):
     class_name: str = "P3O"
     
     # Add P3O-specific parameters on top of PPO base
-    kappa_init: Union[float, list[float]] = MISSING
+    #kappa_init: Union[float, list[float]] = MISSING
     """Initial penalty factor(s)."""
     
     kappa_max: Union[float, list[float]] = MISSING  
@@ -36,5 +36,5 @@ class RslRlP3OAlgorithmCfg(RslRlPpoAlgorithmCfg):
     cost_loss_coef: float = 1.0
     """Coefficient for cost value loss."""
     
-    constraint_delay: int = 0
+    #constraint_delay: int = 0
     """Iterations to delay constraint enforcement."""
