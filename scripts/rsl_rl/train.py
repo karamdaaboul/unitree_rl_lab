@@ -85,12 +85,12 @@ from isaaclab.envs import (
 )
 from isaaclab.utils.dict import print_dict
 from isaaclab.utils.io import dump_pickle, dump_yaml
-from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config
-
+from unitree_lab.envs import ManagerBasedSafeRLEnvCfg
 import unitree_rl_lab.tasks  # noqa: F401
 from unitree_rl_lab.utils.export_deploy_cfg import export_deploy_cfg
+from unitree_rl.safe_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
@@ -99,7 +99,7 @@ torch.backends.cudnn.benchmark = False
 
 
 @hydra_task_config(args_cli.task, "rsl_rl_cfg_entry_point")
-def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
+def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg | ManagerBasedSafeRLEnvCfg, agent_cfg: RslRlOnPolicyRunnerCfg):
     """Train with RSL-RL agent."""
     # override configurations with non-hydra CLI arguments
     agent_cfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
