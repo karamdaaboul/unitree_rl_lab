@@ -21,3 +21,5 @@ class CostTermCfg(ManagerTermBaseCfg):
     Note:
         If the weight is zero, the cost term is ignored.
     """
+    cost_limit: float = 0.0
+    """The cost limit for this term. Defaults to 0.0 if not specified."""

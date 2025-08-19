@@ -62,19 +62,19 @@ class CostManager(ManagerBase):
         # create table for term information
         table = PrettyTable()
         table.title = "Active Cost Terms"
-        table.field_names = ["Index", "Name", "Weight"]
+        table.field_names = ["Index", "Name", "Weight", "Cost Limit"]
         # set alignment of table columns
         table.align["Name"] = "l"
         table.align["Weight"] = "r"
+        table.align["Cost Limit"] = "r"
         # add info on each term
         for index, (name, term_cfg) in enumerate(zip(self._term_names, self._term_cfgs)):
-            table.add_row([index, name, term_cfg.weight])
+            table.add_row([index, name, term_cfg.weight, term_cfg.cost_limit])
         # convert table to string
         msg += table.get_string()
         msg += "\n"
 
         return msg
-
     """
     Properties.
     """
@@ -84,6 +84,19 @@ class CostManager(ManagerBase):
         """Name of active cost terms."""
         return self._term_names
 
+    @property
+    def cost_limits(self) -> list[float]:
+        """Extract cost limits from all active cost terms.
+        
+        Returns:
+            List of cost limits for active cost terms (weight > 0).
+        """
+        cost_limits = []
+        for term_cfg in self._term_cfgs:
+            if term_cfg.weight > 0.0:  # Only include active terms
+                cost_limits.append(term_cfg.cost_limit)
+        return cost_limits
+    
     """
     Operations.
     """
@@ -144,6 +157,30 @@ class CostManager(ManagerBase):
 
         return self._cost_buf
 
+    def compute_unscaled(self) -> torch.Tensor:
+        """Computes the cost signal as a weighted sum of individual terms without scaling by dt.
+
+        This function calls each cost term managed by the class and adds them to compute the net
+        cost signal. It also updates the episodic sums corresponding to individual cost terms.
+
+        Returns:
+            The net cost signal of shape (num_envs,).
+        """
+        # reset computation
+        self._cost_buf[:] = 0.0
+        # iterate over all the cost terms
+        for name, term_cfg in zip(self._term_names, self._term_cfgs):
+            # skip if weight is zero (kind of a micro-optimization)
+            if term_cfg.weight == 0.0:
+                continue
+            # compute term's value
+            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight
+            # update total cost
+            self._cost_buf += value
+            # update episodic sum
+            self._episode_sums[name] += value
+
+        return self._cost_buf
     """
     Operations - Term settings.
     """

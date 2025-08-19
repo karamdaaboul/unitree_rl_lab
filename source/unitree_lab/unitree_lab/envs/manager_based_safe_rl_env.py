@@ -8,7 +8,7 @@ from isaacsim.core.version import get_version
 from isaaclab.ui.widgets import ManagerLiveVisualizer
 from isaaclab.envs.manager_based_rl_env import ManagerBasedRLEnv  # <-- Adjust path as needed
 from unitree_lab.managers import CostManager
-from unitree_lab.envs.manager_based_safe_rl_env_cfg import ManagerBasedSafeRLEnvCfg
+from .manager_based_safe_rl_env_cfg import ManagerBasedSafeRLEnvCfg
 
 
 class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
@@ -66,8 +66,9 @@ class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
         #    If your parent step calls self.cost_manager.compute(...), it’s computed.
         #    Just retrieve it from somewhere. If your parent's code doesn't do it,
         #    do it here:
-        cost_buf = self.cost_manager.compute(dt=self.step_dt)
-        extras_dict["cost"] = cost_buf
+        #cost_buf = self.cost_manager.compute(dt=self.step_dt)
+        cost_buf_unscaled = self.cost_manager.compute_unscaled()
+        extras_dict["cost"] = cost_buf_unscaled
 
         # 3) Return the 6-tuple
         return obs_buf, reward_buf, terminated_buf, truncated_buf, extras_dict
@@ -90,3 +91,8 @@ class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
         if not self._is_closed:
             del self.cost_manager
             super().close()
+
+    @property
+    def cost_limits(self) -> list[float]:
+        """Get cost limits from the cost manager."""
+        return self.cost_manager.cost_limits
