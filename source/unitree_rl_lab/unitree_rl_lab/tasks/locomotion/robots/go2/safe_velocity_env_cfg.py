@@ -348,8 +348,8 @@ class RewardsCfg:
 @configclass
 class CostCfg:
     """Cost terms for the MDP."""
-    dof_pos_limits = CostTerm(func=mdp.joint_pos_limits, weight=2.0, cost_limit=0.5)
-    joint_torques_penalty=CostTerm(func=mdp.joint_torques_l2, weight=2.0, cost_limit=1.0)
+    dof_pos_limits = CostTerm(func=mdp.joint_pos_limits, weight=10.0, cost_limit=0.2)
+    joint_torques_penalty=CostTerm(func=mdp.joint_torques_l2, weight=0.0001, cost_limit=1.5)
 
 @configclass
 class TerminationsCfg:
