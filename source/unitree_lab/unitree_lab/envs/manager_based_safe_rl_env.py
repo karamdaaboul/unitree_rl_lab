@@ -65,7 +65,7 @@ class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
         # 2) Compute your cost if parent doesn't already do so
         #    For P3O/SafeRL, we need individual cost terms, not the summed total
         #    Use compute_individual_costs_unscaled() for multi-constraint scenarios
-        cost_buf_individual = self.cost_manager.compute_individual_costs_unscaled()
+        cost_buf_individual = self.cost_manager.compute(dt=self.step_dt)
         extras_dict["cost"] = cost_buf_individual
 
         # 3) Return the 6-tuple

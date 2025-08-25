@@ -129,60 +129,8 @@ class CostManager(ManagerBase):
         # return logged information
         return extras
 
-    def compute(self, dt: float) -> torch.Tensor:
-        """Computes the cost signal as a weighted sum of individual terms.
 
-        This function calls each cost term managed by the class and adds them to compute the net
-        cost signal. It also updates the episodic sums corresponding to individual cost terms.
-
-        Args:
-            dt: The time-step interval of the environment.
-
-        Returns:
-            The net cost signal of shape (num_envs,).
-        """
-        # reset computation
-        self._cost_buf[:] = 0.0
-        # iterate over all the cost terms
-        for name, term_cfg in zip(self._term_names, self._term_cfgs):
-            # skip if weight is zero (kind of a micro-optimization)
-            if term_cfg.weight == 0.0:
-                continue
-            # compute term's value
-            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight * dt
-            # update total cost
-            self._cost_buf += value
-            # update episodic sum
-            self._episode_sums[name] += value
-
-        return self._cost_buf
-
-    def compute_unscaled(self) -> torch.Tensor:
-        """Computes the cost signal as a weighted sum of individual terms without scaling by dt.
-
-        This function calls each cost term managed by the class and adds them to compute the net
-        cost signal. It also updates the episodic sums corresponding to individual cost terms.
-
-        Returns:
-            The net cost signal of shape (num_envs,).
-        """
-        # reset computation
-        self._cost_buf[:] = 0.0
-        # iterate over all the cost terms
-        for name, term_cfg in zip(self._term_names, self._term_cfgs):
-            # skip if weight is zero (kind of a micro-optimization)
-            if term_cfg.weight == 0.0:
-                continue
-            # compute term's value
-            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight
-            # update total cost
-            self._cost_buf += value
-            # update episodic sum
-            self._episode_sums[name] += value
-
-        return self._cost_buf
-
-    def compute_individual_costs_unscaled(self) -> torch.Tensor:
+    def compute(self, dt) -> torch.Tensor:
         """Computes individual cost terms without scaling by dt.
 
         Returns:
@@ -195,7 +143,7 @@ class CostManager(ManagerBase):
             if term_cfg.weight == 0.0:
                 continue
             # compute term's value
-            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight
+            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight * dt
             active_costs.append(value)
             # update episodic sum
             self._episode_sums[name] += value
