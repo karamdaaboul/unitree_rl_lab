@@ -181,6 +181,31 @@ class CostManager(ManagerBase):
             self._episode_sums[name] += value
 
         return self._cost_buf
+
+    def compute_individual_costs_unscaled(self) -> torch.Tensor:
+        """Computes individual cost terms without scaling by dt.
+
+        Returns:
+            Individual cost signals of shape (num_envs, num_active_terms).
+        """
+        active_costs = []
+        # iterate over all the cost terms
+        for name, term_cfg in zip(self._term_names, self._term_cfgs):
+            # skip if weight is zero (only include active terms)
+            if term_cfg.weight == 0.0:
+                continue
+            # compute term's value
+            value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight
+            active_costs.append(value)
+            # update episodic sum
+            self._episode_sums[name] += value
+
+        # Stack individual costs into a tensor of shape (num_envs, num_active_costs)
+        if active_costs:
+            return torch.stack(active_costs, dim=1)
+        else:
+            # Return zeros if no active costs
+            return torch.zeros(self.num_envs, 0, dtype=torch.float, device=self.device)
     """
     Operations - Term settings.
     """

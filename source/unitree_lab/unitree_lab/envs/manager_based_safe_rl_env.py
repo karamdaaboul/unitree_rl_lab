@@ -62,13 +62,11 @@ class ManagerBasedSafeRLEnv(ManagerBasedRLEnv):
 
         obs_buf, reward_buf, terminated_buf, truncated_buf, extras_dict = parent_step_output
 
-        # 2) Compute your cost if parent doesn’t already do so
-        #    If your parent step calls self.cost_manager.compute(...), it’s computed.
-        #    Just retrieve it from somewhere. If your parent's code doesn't do it,
-        #    do it here:
-        #cost_buf = self.cost_manager.compute(dt=self.step_dt)
-        cost_buf_unscaled = self.cost_manager.compute_unscaled()
-        extras_dict["cost"] = cost_buf_unscaled
+        # 2) Compute your cost if parent doesn't already do so
+        #    For P3O/SafeRL, we need individual cost terms, not the summed total
+        #    Use compute_individual_costs_unscaled() for multi-constraint scenarios
+        cost_buf_individual = self.cost_manager.compute_individual_costs_unscaled()
+        extras_dict["cost"] = cost_buf_individual
 
         # 3) Return the 6-tuple
         return obs_buf, reward_buf, terminated_buf, truncated_buf, extras_dict
