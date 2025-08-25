@@ -35,34 +35,34 @@ COBBLESTONE_ROAD_CFG = terrain_gen.TerrainGeneratorCfg(
     use_cache=False,
     sub_terrains={
         "flat": terrain_gen.MeshPlaneTerrainCfg(proportion=0.1),
-        "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.1, noise_range=(0.01, 0.06), noise_step=0.01, border_width=0.25
-        ),
-        "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
-            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        ),
-        "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
-            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        ),
-        "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-            proportion=0.2, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0
-        ),
-        "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
-            proportion=0.2,
-            step_height_range=(0.05, 0.23),
-            step_width=0.3,
-            platform_width=3.0,
-            border_width=1.0,
-            holes=False,
-        ),
-        "pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
-            proportion=0.2,
-            step_height_range=(0.05, 0.23),
-            step_width=0.3,
-            platform_width=3.0,
-            border_width=1.0,
-            holes=False,
-        ),
+        #"random_rough": terrain_gen.HfRandomUniformTerrainCfg(
+        #    proportion=0.1, noise_range=(0.01, 0.06), noise_step=0.01, border_width=0.25
+        #),
+        #"hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
+        #    proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        #),
+        #"hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
+        #    proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        #),
+        #"boxes": terrain_gen.MeshRandomGridTerrainCfg(
+        #    proportion=0.2, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0
+        #),
+        #"pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
+        #    proportion=0.2,
+        #    step_height_range=(0.05, 0.23),
+        #    step_width=0.3,
+        #    platform_width=3.0,
+        #    border_width=1.0,
+        #    holes=False,
+        #),
+        #"pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
+        #    proportion=0.2,
+        #    step_height_range=(0.05, 0.23),
+        #    step_width=0.3,
+        #    platform_width=3.0,
+        #    border_width=1.0,
+        #    holes=False,
+        #),
     },
 )
 
@@ -416,7 +416,7 @@ class RobotEnvCfg(ManagerBasedRLEnvCfg):
         self.scene.robot.actuators["legs"].damping = 1.0
 
         # remove the curriculum for the command
-        self.curriculum.lin_vel_cmd_levels = None
+        self.curriculum.terrain_levels = None
 
 
 @configclass
@@ -427,7 +427,9 @@ class RobotPlayEnvCfg(RobotEnvCfg):
         self.scene.terrain.terrain_generator.num_rows = 3
         self.scene.terrain.terrain_generator.num_cols = 3
         self.scene.terrain.terrain_generator.curriculum = False
-        self.commands.base_velocity.ranges = self.commands.base_velocity.limit_ranges
+        self.commands.base_velocity.ranges = mdp.UniformLevelVelocityCommandCfg.Ranges(
+            lin_vel_x=(-2.0, 2.0), lin_vel_y=(-0.1, 0.1), ang_vel_z=(-1, 1)
+        )
 
 
 @configclass
@@ -460,6 +462,6 @@ class RobotRealPlayEnvCfg(RobotRealEnvCfg):
     def __post_init__(self):
         super().__post_init__()
         self.scene.num_envs = 32
-        self.scene.terrain.terrain_generator.num_rows = 2
+        self.scene.terrain.terrain_generator.num_rows = 1
         self.scene.terrain.terrain_generator.num_cols = 1
         self.commands.base_velocity.ranges = self.commands.base_velocity.limit_ranges
