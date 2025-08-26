@@ -72,6 +72,26 @@ class RslRlP3oActorCriticCfg(RslRlPpoActorCriticCfg):
     critic_hidden_dims: list[int] = MISSING
     """The hidden dimensions of the critic network."""
 
+@configclass
+class RslRlCupActorCriticCfg(RslRlPpoActorCriticCfg):
+    """Configuration for the P3O actor-critic networks."""
+    
+    class_name: str = "ActorCriticCost"
+    """The policy class name. Default is ActorCriticCost."""
+    
+    critic_hidden_dims: list[int] = MISSING
+    """The hidden dimensions of the critic network."""
+
+@configclass
+class RslRlPpolPidActorCriticCfg(RslRlPpoActorCriticCfg):
+    """Configuration for the PPOL-PID actor-critic networks."""
+    
+    class_name: str = "ActorCriticCost"
+    """The policy class name. Default is ActorCriticCost."""
+    
+    critic_hidden_dims: list[int] = MISSING
+    """The hidden dimensions of the critic network."""
+
 
 ############################
 # Algorithm configurations #
@@ -170,6 +190,36 @@ class RslRlP3oAlgorithmCfg(RslRlPpoAlgorithmCfg):
     #constraint_delay: int = 0
     """Iterations to delay constraint enforcement."""
 
+@configclass
+class RslRlPpolPidAlgorithmCfg(RslRlPpoAlgorithmCfg):
+    """Configuration for the PPOL-PID algorithm."""
+
+    class_name: str = "PPOL_PID"
+    """The algorithm class name. Default is PPOL_PID."""
+    
+    # PID controller parameters
+    lagrangian_pid: tuple[float, float, float] = (0.05, 0.0005, 0.1)
+    """PID gains for Lagrangian multiplier updates (Kp, Ki, Kd)."""
+    
+    lambda_init: list[float] | None = None
+    """Initial Lagrangian multipliers. If None, defaults to [0.1] * num_costs."""
+    
+    lambda_max: float = 100.0
+    """Maximum Lagrangian multiplier value."""
+    
+    pid_scale: float = 1.0
+    """Scaling factor for PID output."""
+    
+    constraint_margin: float = 0.95
+    """Margin for constraint activation."""
+    
+    # Cost-specific parameters
+    use_clipped_cost_loss: bool = True
+    """Whether to use clipped cost value loss."""
+    
+    cost_loss_coef: float = 1.0
+    """Coefficient for cost value loss."""
+
 #########################
 # Runner configurations #
 #########################
@@ -194,10 +244,10 @@ class RslRlOnPolicyRunnerCfg:
     empirical_normalization: bool = MISSING
     """Whether to use empirical normalization."""
 
-    policy: RslRlPpoActorCriticCfg | RslRlPpoActorCriticRecurrentCfg | RslRlP3oActorCriticCfg = MISSING
+    policy: RslRlPpoActorCriticCfg | RslRlPpoActorCriticRecurrentCfg | RslRlP3oActorCriticCfg | RslRlPpolPidActorCriticCfg = MISSING
     """The policy configuration."""
 
-    algorithm: RslRlPpoAlgorithmCfg | RslRlP3oAlgorithmCfg = MISSING
+    algorithm: RslRlPpoAlgorithmCfg | RslRlP3oAlgorithmCfg | RslRlPpolPidAlgorithmCfg = MISSING
     """The algorithm configuration."""
 
     clip_actions: float | None = None

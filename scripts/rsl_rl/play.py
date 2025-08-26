@@ -49,7 +49,7 @@ import os
 import time
 import torch
 
-from rsl_rl.runners import OnPolicyRunner
+from safe_rl.runners import OnPolicyRunner
 
 import isaaclab_tasks  # noqa: F401
 from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent

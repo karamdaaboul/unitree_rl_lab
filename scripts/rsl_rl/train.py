@@ -73,7 +73,7 @@ import os
 import torch
 from datetime import datetime
 
-from rsl_rl.runners import OnPolicyRunner
+from safe_rl.runners import OnPolicyRunner
 
 import isaaclab_tasks  # noqa: F401
 from isaaclab.envs import (

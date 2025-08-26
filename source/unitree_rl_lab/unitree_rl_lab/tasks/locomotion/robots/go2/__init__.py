@@ -51,6 +51,16 @@ gym.register(
 )
 
 gym.register(
+    id="Unitree-Go2-Velocity-Safe-PPOL",
+    entry_point="unitree_lab.envs:ManagerBasedSafeRLEnv",
+    disable_env_checker=True,
+    kwargs={
+        "env_cfg_entry_point": f"{__name__}.safe_velocity_env_cfg:RobotEnvCfg",
+        "rsl_rl_cfg_entry_point": f"unitree_rl_lab.tasks.locomotion.agents.rsl_rl_ppo_cfg:BasePpolPidRunnerCfg",
+    },
+)
+
+gym.register(
     id="Unitree-Go2-Velocity-Safe-Play",
     entry_point="unitree_lab.envs:ManagerBasedSafeRLEnv",
     disable_env_checker=True,

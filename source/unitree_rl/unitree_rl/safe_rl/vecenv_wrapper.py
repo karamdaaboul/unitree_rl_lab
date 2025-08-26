@@ -6,7 +6,7 @@
 import gymnasium as gym
 import torch
 
-from rsl_rl.env import VecEnv
+from safe_rl.env import VecEnv
 
 from isaaclab.envs import DirectRLEnv, ManagerBasedRLEnv
 from unitree_lab.envs import ManagerBasedSafeRLEnv
@@ -191,6 +191,13 @@ class RslRlVecEnvWrapper(VecEnv):
         # this is only needed for infinite horizon tasks
         if not self.unwrapped.cfg.is_finite_horizon:
             extras["time_outs"] = truncated
+
+        # Handle cost information for SafeRL
+        if "cost" in extras:
+            cost_data = extras["cost"]
+            if self.DEBUG:
+                print(f"[DEBUG] Vecenv_Wrapper: Cost data shape from env: {cost_data.shape}")
+                print(f"[DEBUG] Vecenv_Wrapper: Cost data values: {cost_data[0] if len(cost_data) > 0 else 'Empty'}")
 
         # return the step information
         if self.DEBUG:

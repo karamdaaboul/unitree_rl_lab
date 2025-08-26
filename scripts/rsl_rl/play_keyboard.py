@@ -55,7 +55,7 @@ import gymnasium as gym
 import os
 import torch
 
-from rsl_rl.runners import OnPolicyRunner
+from safe_rl.runners import OnPolicyRunner
 
 from isaaclab.utils.dict import print_dict
 
